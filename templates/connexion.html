@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}
+    Connexion
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1>Connexion</h1>
+    <br></br>
+    <form method="POST" class="form-register">
+      {{ form.hidden_tag() }}
+      {{ form.emailAddress.label("Give an email:") }}
+      {{ form.emailAddress(class="form-control", placeholder="Email") }}
+      {{ form.password.label("Give a password:") }}
+      {{ form.password(class="form-control", placeholder="Password") }}
+      <br>
+      {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+
+      <!-- <div class="row">
+        <p class="col-md-3">Email: </p>
+        <input type="text" placeholder="email" class="col-md-3">
+      </div> -->
+      <!-- <div class="row">
+        <p class="col-md-3">mot de passe: </p>
+        <input type="text" placeholder="mot de passe" class="col-md-3">
+      </div>
+      <br></br>
+      <a class="nav-link" href="{{ url_for('profil_page')}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+        </svg><span class="d-none d-xl-inline">&nbsp;créer un compte</span>
+      </a> -->
+    </form>
+  </div>
+  <!-- <script  src = "../js/bootstrap.min.js"></script> -->
+</html>
+{% endblock %}
+    
