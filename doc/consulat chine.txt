@@ -1,0 +1,28 @@
+Le site demandé par le client doit être une refonte du site du consulat de chine, il a pour but de remplacer ce dernier dans un futur proche, il comportera plusieurs pages:
+	- présentation du pays: langue, superficie, fleuve, ville, (vidéos/photos)
+	- création de compte(nom, prénom, mail, nationnalité, n° passeport, date de validation, d'expiration, de création, motif de refus)
+	- demande de visas: donner un fausse passeport, fausse photo (jpeg, png)
+	- remise d'un pdf suite à la validation d'un visa
+	- presse(inventer ou reprendre des actualités du pays)
+	- formulaire de contact(créer une loterie pour permettre de "gagner" la nationalité), le gagnant obtient la nationalité, n'a plus besoin de visa, création aléatoire de comptes,
+	- culture(sport, gastronomie, tourisme, musique)
+
+conception fonctionnelle:
+	- règle d'usage,
+	- maquette,
+	- cahier des charges 
+	
+		Présentation du pays
+Cette page aura pour but quelques chiffres, nom généralistes sur le pays, caractéristique du pays(sa superficie, ses fleuves, ses régions), sa/ses langue/s...
+
+		Création de compte
+Cette page permettra aux utilisateurs de se créer un compte auprès du consulat de Chine. ce compte leurs permettra ensuite de faire une demande de visa 
+
+		Presse
+Ce site aura aussi une page presse. Cette dernière présentera l'actualité du pays, les faits divers
+
+		Formulaire de contact
+Une page de formulaire de contact permettra de s'ajouter à une loterie. Toutes le 2 semaines, il y aura un tirage, le nominé obtiendra d'office le visa du pays. Enfin, la loterie se réinitialisera pour une un nouveau tirage 2 semaine plus tard.
+
+		Culture
+Cette page présentera la culture du pays, aussi bien en terme sportif, gastronomique, musical, site touristique
