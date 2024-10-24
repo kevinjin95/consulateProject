@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}
+    Connexion
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1>Connexion</h1>
+    <br></br>
+    <form method="POST" class="form-register">
+      {{ form.hidden_tag() }}
+      {{ form.emailAddress.label("Give an email:") }}
+      {{ form.emailAddress(class="form-control", placeholder="Email") }}
+      {{ form.password.label("Give a password:") }}
+      {{ form.password(class="form-control", placeholder="Password") }}
+      <br>
+      {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+    </form>
+  </div>
+  <!-- <script  src = "../js/bootstrap.min.js"></script> -->
+</html>
+{% endblock %}
+    
