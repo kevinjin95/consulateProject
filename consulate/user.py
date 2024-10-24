@@ -2,7 +2,7 @@ import json
 from consulate.connectToRedis import connection_redis
 from consulate import bcrypt
 from consulate import loginManager
-
+from flask_login import UserMixin
 r = connection_redis()
 
 def createUser(form):
