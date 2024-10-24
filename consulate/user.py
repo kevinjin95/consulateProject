@@ -1,6 +1,8 @@
 import json
 from consulate.connectToRedis import connection_redis
 from consulate import bcrypt
+from consulate import loginManager
+
 r = connection_redis()
 
 def createUser(form):
@@ -44,7 +46,9 @@ def checkUserConnexion(form):
     for key in listKeys:
         # print("redis: ", r.json().get(key, "email"), r.json().get(key, "password"))
         # print("user: ", form.emailAddress.data, form.password.data)
-        if r.json().get(key, "email") == form.emailAddress.data and r.json().get(key, "password") == form.password.data:
+        if r.json().get(key, "email") == form.emailAddress.data and bcrypt.check_password_hash(
+            r.json().get(key, "password"), form.password.data
+        ):
             return True
     return False
 
@@ -53,3 +57,7 @@ def getUserdata(emailAddressUser):
     for key in listKeys:
         if r.json().get(key, "email") == emailAddressUser:
             return r.json().get(key)
+        
+@loginManager.user_loader
+def load_user(user_id):
+        return r.json().get(user_id)

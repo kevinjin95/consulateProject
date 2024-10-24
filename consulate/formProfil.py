@@ -19,4 +19,4 @@ class ProfilForm(FlaskForm):
         label='Password:',
         validators=[Length(min=16), DataRequired()])
    
-    submit = SubmitField(label='submit')
+    modify = SubmitField(label='modify')
