@@ -10,9 +10,8 @@
     <form method="POST" class="form-register">
       {{ form.hidden_tag() }}
       <div class="row">
-        {{ form.firstName.label('You are') }}
-        {{ form.firstName(class="col-md-2", placeholder="First name") }}
-        {{ form.name(class="col-md-2", placeholder="Name") }}
+        {{ form.userName.label('take a username:') }}
+        {{ form.userName(class="col-md-2", placeholder="Username") }}
         {{ form.emailAddress.label("Your email is") }}
         {{ form.emailAddress(class="form-control", placeholder="Email address") }}
         {{ form.password1.label("Give a password") }}

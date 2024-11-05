@@ -2,15 +2,16 @@ import json
 from consulate.connectToRedis import connection_redis
 from consulate import bcrypt
 from consulate import loginManager
-from flask_login import UserMixin
+from flask_login import UserMixin, login_user
 r = connection_redis()
 
 def createUser(form):
     dict = {
-    'firstName': form.firstName.data,
-    'name': form.name.data,
+    'userName': form.userName.data,
     'email': form.emailAddress.data,
     'password': bcrypt.generate_password_hash(form.password1.data).decode("utf-8"), 
+    'firstName': "",
+    'name': "",
     'age': "",
     'doorNumber': "",
     'road': "",
@@ -46,7 +47,7 @@ def checkUserConnexion(form):
     for key in listKeys:
         # print("redis: ", r.json().get(key, "email"), r.json().get(key, "password"))
         # print("user: ", form.emailAddress.data, form.password.data)
-        if r.json().get(key, "email") == form.emailAddress.data and bcrypt.check_password_hash(
+        if r.json().get(key, "userName") == form.userName.data and bcrypt.check_password_hash(
             r.json().get(key, "password"), form.password.data
         ):
             return True
@@ -61,3 +62,9 @@ def getUserdata(emailAddressUser):
 @loginManager.user_loader
 def load_user(user_id):
         return r.json().get(user_id)
+
+def getUserId(userName):
+    listKeys = r.keys("*")
+    for key in listKeys:
+        if r.json().get(key, "userName") == userName:
+            return r.json().get(key)
