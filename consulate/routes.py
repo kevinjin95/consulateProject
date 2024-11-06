@@ -5,11 +5,11 @@ from consulate.formConnexion import ConnexionForm
 from consulate.formCreation import RegisterForm
 from consulate.formProfil import ProfilForm
 # from flask_login import login_user, login_required, logout_user, 
-from consulate import db
+from consulate import db, Bcrypt
 from flask import Flask
-from flask_bcrypt import bcrypt
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -26,8 +26,8 @@ def load_user(user_id):
 def accountCreation_page():
     form = RegisterForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data)
-        userToCreate = Users(
+        hashed_password = Bcrypt.generate_password_hash(form.password1.data).decode('utf-8')
+        userToCreate = User(
             userName=form.userName.data,
             emailAddress=form.emailAddress.data,
             passwordHash=hashed_password
@@ -41,7 +41,7 @@ def accountCreation_page():
         return redirect(url_for('connexion_page'))
     if form.errors != {}:
         for errMsg in form.errors.values():
-            print(f"there was errors when creating an user: {errMsg}", category='danger')
+            flash(f"there was errors when creating an user: {errMsg}", category='danger')
             flash(f"there was errors when creating an user: {errMsg}", category='danger')
     return render_template('accountCreation.html', form=form)
 
@@ -52,9 +52,9 @@ def connexion_page():
         print('username: ', form.userName)
         print('email: ', form.emailAddress)
         print('password: ', form.password1)
-        hashed_password = bcrypt.generate_password_hash(form.password.data)
+        hashed_password = Bcrypt.generate_password_hash(form.password.data)
         print(hashed_password)
-        # userToCreate = Users(
+        # userToCreate = User(
         #     userName=form.userName,
         #     emailAddress=form.emailAddress,
         #     password1=hashed_password,
