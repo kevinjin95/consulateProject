@@ -11,7 +11,7 @@ class RegisterForm(FlaskForm):
         validators=[Email(), DataRequired(), Length(max=40)])
     password1 = PasswordField(
         label='Password:',
-        validators=[Length(min=16), DataRequired(), Length(max=80)])
+        validators=[Length(min=6, max=80), DataRequired()])
     password2 = PasswordField(
         label='Confirm password:', 
         validators=[EqualTo('password1'), DataRequired()])

@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, flash
-from consulate.models import Users
+from consulate.models import User
 from consulate import app
 from consulate.formConnexion import ConnexionForm
 from consulate.formCreation import RegisterForm
@@ -7,7 +7,7 @@ from consulate.formProfil import ProfilForm
 # from flask_login import login_user, login_required, logout_user, 
 from consulate import db
 from flask import Flask
-# from flask_bcrypt import Bcrypt
+from flask_bcrypt import bcrypt
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 login_manager = LoginManager()
@@ -20,17 +20,22 @@ def home_page():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Users.query.get(int(user_id))
+    return User.query.get(int(user_id))
 
 @app.route("/accountCreation",  methods=['GET', 'POST'])
 def accountCreation_page():
     form = RegisterForm()
     if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data)
         userToCreate = Users(
-            userName=form.userName,
-            emailAddress=form.emailAddress,
-            passwordHash=form.password1,
+            userName=form.userName.data,
+            emailAddress=form.emailAddress.data,
+            passwordHash=hashed_password
             )
+        # print('username: ', form.userName.data)
+        # print('email: ', form.emailAddress.data)
+        # print('password: ', form.password1.data)
+        # print(hashed_password)
         db.session.add(userToCreate)
         db.session.commit()
         return redirect(url_for('connexion_page'))
@@ -44,12 +49,17 @@ def accountCreation_page():
 def connexion_page():
     form = ConnexionForm()
     if form.validate_on_submit():
-        userToCreate = Users(
-            userName=form.userName,
-            emailAddress=form.emailAddress,
-            password1=form.password,
-            )
-        db.session.add(userToCreate)
+        print('username: ', form.userName)
+        print('email: ', form.emailAddress)
+        print('password: ', form.password1)
+        hashed_password = bcrypt.generate_password_hash(form.password.data)
+        print(hashed_password)
+        # userToCreate = Users(
+        #     userName=form.userName,
+        #     emailAddress=form.emailAddress,
+        #     password1=hashed_password,
+        #     )
+        # db.session.add(userToCreate)
     #     if checkUserConnexion(form):
     #         login_user(getUserId(form.userName.data))
     #         login_user(form.emailAddress.data)
