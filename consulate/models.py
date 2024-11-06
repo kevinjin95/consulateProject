@@ -1,6 +1,6 @@
-from consulate import db
+from consulate import db, bcrypt
 # from flask_login import UserMixin, login_user
-from wtforms.validators import ValidationError
+
 class Person(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     firstName= db.Column(db.String(20), nullable=False)
@@ -15,22 +15,21 @@ class User(db.Model):
     emailAddress = db.Column(db.String(20), nullable=False, unique=True)
     passwordHash = db.Column(db.String(80), nullable=False)
    
-    def checkUserName(self, userNameToCheck):
-        user = User.query.all(userName=userNameToCheck.data).first()
-        if user:
-            raise ValidationError(f'The user {user} is already used !!')
-
-    def checkEmailAddress(self, emailAddressToCheck):
-        emailAddress = User.query.all(emailAddress=emailAddressToCheck.data).first()
-        if emailAddress:
-            raise ValidationError(f'The email address {emailAddress} is already used !!')
-        
     def __repr__(self):
         return f'User {self.userName}'
 
     @property
     def password(self):
         return self.password
+    
+    @password.setter
+    def password(self, password1):
+        self.passwordHash = bcrypt.generate_password_hash(password1).decode('utf-8')
+    
+    @password.getter
+    def password(self, password1):
+        return bcrypt.check_password_hash(self.passwordHash, password1)
+    
 # def checkUserConnexion(form):
 #     pass
 
