@@ -35,12 +35,11 @@ def accountCreation_page():
         # print('email: ', emailAddress)
         # print('password: ', password)
         # print(hashed_password)
-        # db.session.add(userToCreate)
-        # db.session.commit()
+        db.session.add(userToCreate)
+        db.session.commit()
         return redirect(url_for('connexion_page'))
     if form.errors != {}:
         for errMsg in form.errors.values():
-            # flash(f"there was errors when creating an user: {errMsg}", category='danger')
             flash(f"there was errors when creating an user: {errMsg}", category='danger')
     return render_template('accountCreation.html', form=form)
 
