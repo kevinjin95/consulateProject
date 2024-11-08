@@ -1,26 +1,20 @@
 from flask import render_template, redirect, url_for, flash
-from consulate.models import User
-from consulate import app
+from consulate.models import User, Home, Person
+from consulate import app, db, bcrypt
 from consulate.formConnexion import ConnexionForm
 from consulate.formCreation import RegisterForm
 from consulate.formProfil import ProfilForm
-# from flask_login import login_user, login_required, logout_user, 
-from consulate import db
+from flask_login import login_user, login_required, logout_user
 from flask import Flask
-from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+# login_manager = LoginManager()
+# login_manager.init_app(app)
 
 @app.route("/")
 @app.route("/home")
 def home_page():
     return render_template('countryPresentation.html')
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
 
 @app.route("/accountCreation",  methods=['GET', 'POST'])
 def accountCreation_page():
@@ -29,12 +23,8 @@ def accountCreation_page():
         userToCreate = User(
             userName=form.userName.data,
             emailAddress=form.emailAddress.data,
-            password=form.password1.data
+            setPassword=form.password1.data
             )
-        print('username: ', userToCreate)
-        # print('email: ', emailAddress)
-        # print('password: ', password)
-        # print(hashed_password)
         db.session.add(userToCreate)
         db.session.commit()
         return redirect(url_for('connexion_page'))
@@ -47,48 +37,58 @@ def accountCreation_page():
 def connexion_page():
     form = ConnexionForm()
     if form.validate_on_submit():
-        pass
-        # print('username: ', form.userName)
-        # print('email: ', form.emailAddress)
-        # print('password: ', form.password1)
-        # hashed_password = Bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        # print(hashed_password)
-        # userToCreate = User(
-        #     userName=form.userName,
-        #     emailAddress=form.emailAddress,
-        #     password1=hashed_password,
-        #     )
-        # db.session.add(userToCreate)
-    #     if checkUserConnexion(form):
-    #         login_user(getUserId(form.userName.data))
-    #         login_user(form.emailAddress.data)
-    #         flash(f"you are logged in as : { form.emailAddress.data }", category='success')
-    #         userInfo = getUserdata(form.emailAddress.data)
-    #         print('connexion ok for: ', form.emailAddress.data)
-    #         print(userInfo)
-    #         return redirect(url_for('profil_page'))
-    #     else:
-    #         flash("Username and password are not match, please try again!", category='danger')
-    # if form.errors != {}:
-    #     for errMsg in form.errors.values():
-    #         flash(f'there was errors when creating an user: {errMsg}', category='danger')
+        attemptedUser = User.query.filter_by(userName=form.userName.data).first()
+        print('from form: ', form.password.data)
+        print('from db: ', attemptedUser.password)
+        # attemptedUser.checkPassword = form.password.data
+        # attemptedUser.checkPassword)
+        if attemptedUser and bcrypt.check_password_hash(attemptedUser.password, form.password.data):
+            login_user(attemptedUser)
+            flash(f"you are logged in as: { attemptedUser.userName } !", category='success')
+            return redirect(url_for('profil_page'))
+        else:
+            flash('the connection failed, please retry !', category='danger')
     return render_template('connexion.html', form=form)
 
 @app.route("/demandeVisa")
-# @login_required
+@login_required
 def demandeVisa_page():
     return render_template('demandeVisa.html')
 
 @app.route("/profil",methods=['GET', 'POST'])
-# @login_required
+@login_required
 def profil_page():
     form = ProfilForm()
-#     # userInfo = getUserdata(form.emailAddress.data)
+    if form.validate_on_submit():
+        userToCreate = User(
+            userName=form.userName.data,
+            emailAddress=form.emailAddress.data,
+            setPassword=form.password1.data
+            )
+        homeToCreate = Home(
+            # live=form.userName.data,
+            doorNumber=form.doorNumber.data,
+            streetName=form.road.data,
+            city=form.city.data,
+            postalCode=form.postalCode.data
+            )
+        personToCreate = Person(
+            firstName=form.firstName.data,
+            name=form.name.data,
+            age=form.age.data
+            )
+        db.session.add(userToCreate)
+        db.session.add(homeToCreate)
+        db.session.add(personToCreate)
+        db.session.commit()
+    # userInfo = getUserdata(form.emailAddress.data)
     return render_template('profil.html', form=form)
 
-@app.route('/home', methods=['GET', 'POST'])
-# @login_required
-def logout():
-#     logout_user()
-    return redirect(url_for('countryPresentation'))
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout_page():
+    logout_user()
+    flash('You have been logged out !', category='info')
+    # return redirect(url_for('home_page'))
+    return render_template('logout.html')
 

@@ -1,5 +1,10 @@
-from consulate import db, bcrypt
-# from flask_login import UserMixin, login_user
+from consulate import db, bcrypt, loginManager
+from flask_login import UserMixin, login_user
+
+@loginManager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 
 class Person(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -8,7 +13,7 @@ class Person(db.Model):
     age = db.Column(db.Integer())
      # phoneNumber = db.Column(db.Integer(), nullable=True)
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer(), primary_key=True)
     # ownerId = db.Column(db.Integer(), db.ForeignKey('person.id'))
     userName = db.Column(db.String(20), nullable=False, unique=True)
@@ -22,24 +27,18 @@ class User(db.Model):
     def password(self):
         return self.password
     
+    @password.getter
+    def password(self):
+        return self.passwordHash
+
     @password.setter
     def password(self, password1):
         self.passwordHash = bcrypt.generate_password_hash(password1).decode('utf-8')
     
-    @password.getter
-    def password(self, password1):
-        return bcrypt.check_password_hash(self.passwordHash, password1)
-    
-# def checkUserConnexion(form):
-#     pass
-
-# def getUserId(userName):
-#     pass
-
-# @loginManager.user_loader
-# def load_user(user_id):
-#     pass
-
+    @password.deleter
+    def password(self):
+        del self._name
+   
 class Home(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     live = db.Column(db.Integer(), db.ForeignKey('person.id'))
