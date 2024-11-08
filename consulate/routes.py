@@ -4,6 +4,7 @@ from consulate import app, db, bcrypt
 from consulate.formConnexion import ConnexionForm
 from consulate.formCreation import RegisterForm
 from consulate.formProfil import ProfilForm
+from consulate.formVisaApp import visaApplicationForm
 from flask_login import login_user, login_required, logout_user
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -36,53 +37,51 @@ def accountCreation_page():
 @app.route("/connexion", methods=['GET', 'POST'])
 def connexion_page():
     form = ConnexionForm()
+    # attemptedUser = User.query.filter_by(userName=form.userName.data).first()
     if form.validate_on_submit():
+        # print(attemptedUser.userName)
+        # print(attemptedUser.emailAddress)
+        # print(attemptedUser.passwordHash)
         attemptedUser = User.query.filter_by(userName=form.userName.data).first()
-        print('from form: ', form.password.data)
-        print('from db: ', attemptedUser.password)
-        # attemptedUser.checkPassword = form.password.data
-        # attemptedUser.checkPassword)
         if attemptedUser and bcrypt.check_password_hash(attemptedUser.password, form.password.data):
             login_user(attemptedUser)
             flash(f"you are logged in as: { attemptedUser.userName } !", category='success')
-            return redirect(url_for('profil_page'))
+            return redirect(url_for('profil_page', user=form.userName.data))
+        if not attemptedUser:
+            flash('this user is unknown, please retry !', category='danger')
         else:
             flash('the connection failed, please retry !', category='danger')
     return render_template('connexion.html', form=form)
 
-@app.route("/demandeVisa")
+@app.route("/profil/<string:user>",methods=['GET', 'POST'])
 @login_required
-def demandeVisa_page():
-    return render_template('demandeVisa.html')
+def profil_page(user):
+    user = User.query.filter_by(userName=user).first()    
+    print(user.userName)
+    print(user.emailAddress)
+    print(user.passwordHash)
+    # userInfo = getUserdata(form.emailAddress.data)
+    return render_template('profil.html', user=user)
 
-@app.route("/profil",methods=['GET', 'POST'])
+@app.route("/modifyProfil", methods=['GET', 'POST'])
 @login_required
-def profil_page():
-    form = ProfilForm()
+def modifyProfil_page():
+    form = RegisterForm()
     if form.validate_on_submit():
         userToCreate = User(
             userName=form.userName.data,
             emailAddress=form.emailAddress.data,
             setPassword=form.password1.data
             )
-        homeToCreate = Home(
-            # live=form.userName.data,
-            doorNumber=form.doorNumber.data,
-            streetName=form.road.data,
-            city=form.city.data,
-            postalCode=form.postalCode.data
-            )
-        personToCreate = Person(
-            firstName=form.firstName.data,
-            name=form.name.data,
-            age=form.age.data
-            )
         db.session.add(userToCreate)
-        db.session.add(homeToCreate)
-        db.session.add(personToCreate)
         db.session.commit()
-    # userInfo = getUserdata(form.emailAddress.data)
-    return render_template('profil.html', form=form)
+    return render_template('modifyProfil.html', form=form)
+
+@app.route("/demandeVisa")
+@login_required
+def demandeVisa_page():
+    form = visaApplicationForm()
+    return render_template('visaApplication.html', form=form)
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
@@ -91,4 +90,3 @@ def logout_page():
     flash('You have been logged out !', category='info')
     # return redirect(url_for('home_page'))
     return render_template('logout.html')
-

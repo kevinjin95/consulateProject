@@ -3,18 +3,16 @@ from wtforms import StringField, PasswordField, SubmitField, IntegerField
 from wtforms.validators import Length, EqualTo, Email, DataRequired
 
 class ProfilForm(FlaskForm):
-    firstName = StringField(label='First name:', validators=[DataRequired()])
-    name = StringField(label='Name:')
-    age = IntegerField(label='Age:')
-    doorNumber = IntegerField(label='Door number:')
-    road = StringField(label='Road:')
-    city = StringField(label='City:')
-    postalCode = IntegerField(label='Postal code:')
-    phoneNumber = StringField(label='Phone number:')
+    userName = StringField(
+        label='userName:', 
+        validators=[DataRequired(), Length(min=2, max=30)])
     emailAddress = StringField(
         label='Email:',
         validators=[Email(), DataRequired(), Length(max=40)])
-    password = PasswordField(
+    password1 = PasswordField(
         label='Password:',
-        validators=[Length(min=16), DataRequired()])
-    modify = SubmitField(label='modify')
+        validators=[Length(min=6, max=80), DataRequired()])
+    password2 = PasswordField(
+        label='Confirm password:', 
+        validators=[EqualTo('password1'), DataRequired()])
+    submit = SubmitField(label='Modify')

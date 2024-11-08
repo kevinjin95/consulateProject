@@ -15,7 +15,12 @@
 </head>
   <body>
     <nav class="navbar sticky-top navbar-expand-lg bg-white">
-        <button class="mx-3 btn btn-primary">menu</button>
+        {% if current_user.is_authenticated %}
+            <a class="nav-link" href="{{ url_for('demandeVisa_page') }}">
+                <span class="d-none d-xl-inline">&nbsp;Demande de visa</span>
+            </a>
+        {% endif %}
+       
         <div class="container">
         <a class="navbar-brand mx-auto" href="{{ url_for('home_page') }}">
             <img src="{{ url_for('static', filename='image/logo.PNG') }}" alt="logo du site"/>
